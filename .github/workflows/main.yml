@@ -4,10 +4,8 @@ on:
   push:
     branches:
       - main
-
 env:
-  GITHUB_TOKEN: ${{ secrets.TOKEN }}
-
+  GH_TOKEN: ${{ github.token }} # token de GitHub para tener permisos para crear la Action
 jobs:
   flutter:
     runs-on: ubuntu-latest
@@ -15,33 +13,24 @@ jobs:
     steps:
       - name: Clonado
         uses: actions/checkout@v4
-
       - name: Configurar Java
         uses: actions/setup-java@v4.7.1
         with:
           distribution: 'temurin'
-          java-version: '25'
-
+          java-version: '17'
       - name: Instalar flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          flutter-version: '3.41.0'
-
+          channel: stable
+          flutter-version: 3.41.0
       - name: Dependencias del proyecto
         run: flutter pub get
-
       - name: Ejecutar tests
         run: flutter test
-
-      - name: Construir APK y ABB
+      - name: Construir APK y AAB
         run: flutter build apk --release
-
       - run: flutter build appbundle --release
-
       - name: Crear release
         run: gh release create "v1.0.0"
-
       - name: Subir archivos a release
         run: gh release upload "v1.0.0" build/app/outputs/flutter-apk/app-release.apk build/app/outputs/bundle/release/app-release.aab
-        
