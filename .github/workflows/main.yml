@@ -33,3 +33,15 @@ jobs:
 
       - name: Ejecutar tests
         run: flutter test
+
+      - name: Construir APK y ABB
+        run: flutter build apk --release
+
+      - run: flutter build appbundle --release
+
+      - name: Crear release
+        run: gh release create "v1.0.0"
+
+      - name: Subir archivos a release
+        run: gh release upload "v1.0.0" build/app/outputs/flutter-apk/app-release.apk build/app/outputs/bundle/release/app-release.aab
+        
